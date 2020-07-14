@@ -3,7 +3,7 @@ from pyppeteer import launch
 
 RATE_RECORD_MOD = "https://dsctmststr2.dhl.com/GC3/glog.webserver.finder.FinderServlet?ct=MTgxMzA2MDUwOTgwMTEwNTA2NQ%3D%3D&query_name=glog.server.query.rate.RateGeoQuery&finder_set_gid=MXPLAN.MX%20RECORD"
 RATE_OFFERING_MOD = "https://dsctmststr2.dhl.com/GC3/glog.webserver.finder.FinderServlet?ct=NzExMTkyNjc2NjMzNTM4ODk3OQ%3D%3D&query_name=glog.server.query.rate.RateOfferingQuery&finder_set_gid=MXPLAN.MX%20OFFERING"
-SAMPLE_RID = "d121F_1927635_48M-CON_CHI_TAPACHULA"
+SAMPLE_RID = "115F_6049735_THN"
 
 #Function for reading restricted local credentials
 def readLoginCred(filename):
@@ -53,24 +53,27 @@ async def rateRecord(page):
 async def rateRecordOTM():
     browser = await launch(headless=False)  # headless false means open the browser in the operation
     page = await browser.newPage()
-    await page.setViewport({"width": 1024, "height": 768, "deviceScaleFactor": 1})
+    #await page.setViewport({"width": 1024, "height": 768, "deviceScaleFactor": 1})
     page.setDefaultNavigationTimeout(60000)
+
+    #1 Login
     await page.goto("https://dsctmststr2.dhl.com/GC3/glog.webserver.servlet.umt.Login")
     credentials = readLoginCred("cred.txt")
     passw=await page.waitFor("[name='userpassword']")
     usernN=await page.waitFor("[name='username']")
-    await usernN.type(credential[0])
-    await passw.type(credential[1])  
-    await page.click("[name='submitbutton']")   
-    
+    await usernN.type(credentials[0])
+    await passw.type(credentials[1])        
+    await page.click("[name='submitbutton']")
     #await page.waitForNavigation()
-    await page.goto("https://dsctmststr2.dhl.com/GC3/glog.webserver.finder.FinderServlet?ct=MTgxMzA2MDUwOTgwMTEwNTA2NQ%3D%3D&query_name=glog.server.query.rate.RateGeoQuery&finder_set_gid=MXPLAN.MX%20RECORD")
-    await page.type("#bodyDataDiv > table > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(1) > td > div > input[type=text]:nth-child(3)",SAMPLE_RID)
+
+    #2 Search rate
+    await page.goto("https://dsctmststr2.dhl.com/GC3/glog.webserver.finder.FinderServlet?ct=MTgxMzA2MDUwOTgwMTEwNTA2NQ%3D%3D&query_name=glog.server.query.rate.RateGeoQuery&finder_set_gid=MXPLAN.MX%20RECORD")  
+    await page.type("#bodyDataDiv > table > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(1) > td > div > input[type=text]:nth-child(3)",SAMPLE_RID) 
     await page.click("#bodyDataDiv > table > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(2) > td > div > select > option:nth-child(2)")
     await page.click("#search_button")
-    
-   
     await page.waitForNavigation()
+    
+    #3 Validate every rate via Rate Offering ID
     await page.waitFor("#resultsPage\:pgl2 > tbody > tr > td > div > table > tbody > tr > td:nth-child(2) > span:nth-child(2)")
     element = await page.J("#resultsPage\:pgl2 > tbody > tr > td > div > table > tbody > tr > td:nth-child(2) > span:nth-child(2)")
     #Extracts innerText of element
@@ -78,22 +81,31 @@ async def rateRecordOTM():
     if total_results > 0:
         cb = await page.J("#rgSGSec\.1\.1\.1\.1\.check")
         await cb.click()
+        element = await page.J("#rgPageSelectedTotal")
+        #Total selected
+        selected_total = int (await page.evaluate('(element) => element.innerText', element))
+        #Click on the first one
+        #for i in range(1,selected_total):
+        await page.click("#rgSGSec\\2e 2\\2e 2\\2e {}\\2e 1 > a".format(1))
+
+        popLen = len(browser.targets())
+        pop = browser.targets()[popLen-1]
+        popup = await pop.page()
+        print(popup.url)
+
+        #4 Validate Rate offering ID
+        element = await popup.J("#bodyDataDiv > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1) > div > div.fieldData")
+        #print(element)
+        #offeringID = str (await popup.evaluate('(element) => element.innerText', element))
+        #print(offeringID)
+
+        
+        await page.waitForNavigation() 
+
     else:
         await rateOffering(page)
-      
-    await page.click("#viewButton")
-    
-    #Locate and manage the corresping pop up
-    popI = len(browser.targets())
-    print(popI)
-    pop = browser.targets()[popI-1]
-    popup = await pop.page()
-    #offeringIDElement = await popup.J("#bodyDataDiv > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1) > div > div.fieldData")
-    print(popup.url)
-    offeringID = await page.evaluate('(element) => element.innerText',"#bodyDataDiv > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1) > div > div.fieldData")
-    print(offeringID)
-    await page.waitFor(6000) 
-    return 1
+
+    await page.waitForNavigation()
 
 
 async def main():
@@ -104,5 +116,5 @@ async def main():
     await page.waitFor(6000)
     await browser.close()
 
-asyncio.get_event_loop().run_until_complete(main())
-
+#asyncio.get_event_loop().run_until_complete(main())
+asyncio.get_event_loop().run_until_complete(rateRecordOTM())
