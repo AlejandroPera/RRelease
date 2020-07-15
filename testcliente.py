@@ -4,36 +4,29 @@ import pandas as pd
 
 formato=[]
 
-filename=r'C:\Users\aperalda\Desktop\TestFormato.xlsx' 
-tfares=r'C:\Users\aperalda\Documents\AltaDeTarifas\TarifMaster.xlsx'
-
+filename=r'D:\Descargas\TestFormatooo.xlsx' 
+tfares=r'D:\Descargas\TarifMaster.xlsx'
+ 
 def tariifario(filas):
-    # tarifario=pd.read_excel(tfares)
-    # print(tarifario)
     trf=load_workbook(tfares)
     ws = trf.worksheets[0]
     origin_Nomenclature_row = list(ws.rows)[1]
     destination_site_col=list(ws.columns)[2]
     unity_row=list(ws.rows)[2]
     dest=[cell.value for cell in destination_site_col]
-    # origin=[cell.value for cell in origin_Nomenclature_row]
     unities=[cell.value for cell in unity_row]
-    # print(origin)
-    print(dest)
-    print(unities)
     for f in filas:
         special_case_flag=0
         site=f[3].split()[0]
         state=f[6].split('/')[0].strip()
         destination=f[6].split('/')[1].strip()
         unity_type=f[4]
+        print(unity_type,'Unity type')
         print(site,'o')
         print(state,'S')
         print(destination,'d')
         if destination in ['LA PAZ', 'BENITO JUAREZ','CALERA']:
             special_case_flag=1
-        # origin_index=origin.index(site)+1
-        # print(origin_index,'o')
         if special_case_flag==0:
             destination_index=dest.index(destination)+1
         else:
@@ -54,12 +47,68 @@ def tariifario(filas):
                     destination_index=133
         print(destination_index,'d')
         if site=='015':
-            indexUnity=unities.index(unity_type,4,10)
+            indexUnity=unities.index(unity_type,4,11)+1
         elif site=='009':
-            indexUnity=unities.index(unity_type,12,25)
-        elif
-
-
+            indexUnity=unities.index(unity_type,12,26)+1
+        elif site=='037':
+            indexUnity=unities.index(unity_type,27,34)+1
+        elif site=='140':
+            indexUnity=unities.index(unity_type,35,42)+1
+        elif site=='130':
+            indexUnity=unities.index(unity_type,43,50)+1
+        elif site=='139':
+            indexUnity=unities.index(unity_type,51,58)+1
+        elif site=='151':
+            indexUnity=unities.index(unity_type,59,66)+1
+        elif site=='187':
+            indexUnity=unities.index(unity_type,67,74)+1
+        elif site=='004':
+            indexUnity=unities.index(unity_type,75,90)+1
+        elif site=='051':
+            indexUnity=unities.index(unity_type,91,106)+1
+        elif site=='100':
+            indexUnity=unities.index(unity_type,107,114)+1
+        elif site=='108':
+            indexUnity=unities.index(unity_type,115,122)+1
+        elif site=='116':
+            indexUnity=unities.index(unity_type,123,138)+1
+        elif site=='065':
+            indexUnity=unities.index(unity_type,139,146)+1
+        elif site=='016':
+            indexUnity=unities.index(unity_type,147,155)+1
+        elif site=='083':
+            indexUnity=unities.index(unity_type,156,159)+1
+        elif site=='186':
+            indexUnity=unities.index(unity_type,160,167)+1
+        elif site=='002':
+            indexUnity=unities.index(unity_type,168,176)+1
+        elif site=='014':
+            indexUnity=unities.index(unity_type,177,184)+1
+        elif site=='019':
+            indexUnity=unities.index(unity_type,185,193)+1
+        elif site=='035':
+            indexUnity=unities.index(unity_type,194,202)+1
+        elif site=='024':
+            indexUnity=unities.index(unity_type,203,211)+1
+        elif site=='146':
+            indexUnity=unities.index(unity_type,212,219)+1
+        elif site=='027':
+            indexUnity=unities.index(unity_type,220,227)+1
+        elif site=='031':
+            indexUnity=unities.index(unity_type,228,236)+1
+        elif site=='132':
+            indexUnity=unities.index(unity_type,237,244)+1
+        elif site=='115':
+            indexUnity=unities.index(unity_type,245,252)+1
+        elif site=='145':
+            indexUnity=unities.index(unity_type,253,262)+1
+        elif site=='182':
+            indexUnity=unities.index(unity_type,263,270)+1
+        elif site=='185':
+            indexUnity=unities.index(unity_type,271,275)+1
+        print(destination_index,indexUnity,'VectorMatricial')
+        fare_CV=ws.cell(destination_index,indexUnity).value
+        print(fare_CV,'fare')
 
 def validation():
     workbook = xlrd.open_workbook(filename)        #Determina el numero de filas
@@ -70,7 +119,6 @@ def validation():
     ws = wb.worksheets[0]
     for i in range(2,13):
         formato.append(ws.cell(8,i).value.upper())
-    print(formato)
     fecha=str(ws.cell(7,5).value).split()[0]
     if fecha==str(datetime.date.today()):
         pass
@@ -91,17 +139,20 @@ def validation():
                             cv='0'+cv
                         fila.append(cv)
                         continue
-                    fila.append(ws.cell(i,a).value)
+                    else:
+                        fila.append(ws.cell(i,a).value)
+                else:
+                    fila.append('')
             else:
                 fila.append('')
         if '' in fila:
             noProcessedCV.append(fila[7])
         else:
             filas.append(fila)
+
     print(filas)
     print(noProcessedCV)
     tariifario(filas)
     # noprocesados(noProcessedCV)
 validation()
-
 
