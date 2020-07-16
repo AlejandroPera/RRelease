@@ -7,7 +7,7 @@ account= win32.Dispatch("Outlook.Application").Session.Accounts
 
 formato=[]
 
-tfares=r'D:\Descargas\TarifMaster.xlsx'
+tfares=r'C:\Users\aperalda\Documents\AltaDeTarifas\TarifMaster.xlsx'
  
 def txt_to_str(route):
     f = open(route, mode="r", encoding="utf-8")
@@ -46,105 +46,105 @@ def tariifario(filas,filename):
     unities=[cell.value for cell in unity_row]
 
     for f in filas:
-        special_case_flag=0
-        site=f[3].split()[0]
-        state=f[6].split('/')[0].strip()
-        destination=f[6].split('/')[1].strip()
-        unity_type=f[4]
-        print(unity_type,'Unity type')
-        print(site,'o')
-        print(state,'S')
-        print(destination,'d')
-        if destination in ['LA PAZ', 'BENITO JUAREZ','CALERA']:
-            special_case_flag=1
-        if special_case_flag==0:
-            destination_index=dest.index(destination)+1
-        else:
-            if destination=='LA PAZ':
-                if state=='BCS':
-                    destination_index=102
-                else:
-                    destination_index=23
-            elif destination=='CALERA':
-                if state=='ZAC':
-                    destination_index=502
-                else:
-                    destination_index=514
+        if type(f[10]) == str:
+            special_case_flag=0
+            site=f[3].split()[0]
+            state=f[6].split('/')[0].strip()
+            destination=f[6].split('/')[1].strip()
+            unity_type=f[4]
+            print(unity_type,'Unity type')
+            print(site,'o')
+            print(state,'S')
+            print(destination,'d')
+            if destination in ['LA PAZ', 'BENITO JUAREZ','CALERA']:
+                special_case_flag=1
+            if special_case_flag==0:
+                destination_index=dest.index(destination)+1
             else:
-                if state=='QTR':
-                    destination_index=119
+                if destination=='LA PAZ':
+                    if state=='BCS':
+                        destination_index=102
+                    else:
+                        destination_index=23
+                elif destination=='CALERA':
+                    if state=='ZAC':
+                        destination_index=502
+                    else:
+                        destination_index=514
                 else:
-                    destination_index=133
+                    if state=='QTR':
+                        destination_index=119
+                    else:
+                        destination_index=133
 
-        print(destination_index,'d')
+            print(destination_index,'d')
 
 
-        if site=='015':
-            indexUnity=unities.index(unity_type,4,11)+1
-        elif site=='009':
-            indexUnity=unities.index(unity_type,12,26)+1
-        elif site=='037':
-            indexUnity=unities.index(unity_type,27,34)+1
-        elif site=='140':
-            indexUnity=unities.index(unity_type,35,42)+1
-        elif site=='130':
-            indexUnity=unities.index(unity_type,43,50)+1
-        elif site=='139':
-            indexUnity=unities.index(unity_type,51,58)+1
-        elif site=='151':
-            indexUnity=unities.index(unity_type,59,66)+1
-        elif site=='187':
-            indexUnity=unities.index(unity_type,67,74)+1
-        elif site=='004':
-            indexUnity=unities.index(unity_type,75,90)+1
-        elif site=='051':
-            indexUnity=unities.index(unity_type,91,106)+1
-        elif site=='100':
-            indexUnity=unities.index(unity_type,107,114)+1
-        elif site=='108':
-            indexUnity=unities.index(unity_type,115,122)+1
-        elif site=='116':
-            indexUnity=unities.index(unity_type,123,138)+1
-        elif site=='065':
-            indexUnity=unities.index(unity_type,139,146)+1
-        elif site=='016':
-            indexUnity=unities.index(unity_type,147,155)+1
-        elif site=='083':
-            indexUnity=unities.index(unity_type,156,159)+1
-        elif site=='186':
-            indexUnity=unities.index(unity_type,160,167)+1
-        elif site=='002':
-            indexUnity=unities.index(unity_type,168,176)+1
-        elif site=='014':
-            indexUnity=unities.index(unity_type,177,184)+1
-        elif site=='019':
-            indexUnity=unities.index(unity_type,185,193)+1
-        elif site=='035':
-            indexUnity=unities.index(unity_type,194,202)+1
-        elif site=='024':
-            indexUnity=unities.index(unity_type,203,211)+1
-        elif site=='146':
-            indexUnity=unities.index(unity_type,212,219)+1
-        elif site=='027':
-            indexUnity=unities.index(unity_type,220,227)+1
-        elif site=='031':
-            indexUnity=unities.index(unity_type,228,236)+1
-        elif site=='132':
-            indexUnity=unities.index(unity_type,237,244)+1
-        elif site=='115':
-            indexUnity=unities.index(unity_type,245,252)+1
-        elif site=='145':
-            indexUnity=unities.index(unity_type,253,262)+1
-        elif site=='182':
-            indexUnity=unities.index(unity_type,263,270)+1
-        elif site=='185':
-            indexUnity=unities.index(unity_type,271,275)+1
-        print(destination_index,indexUnity,'VectorMatricial')
-        fare_CV=ws.cell(destination_index,indexUnity).value
-        print(fare_CV,'fare')
-    trf.close()
-    dest = shutil.copy(filename, r'D:\Trabajo\NewRPA')
-    os.remove(filename)
+            if site=='015':
+                indexUnity=unities.index(unity_type,4,11)+1
+            elif site=='009':
+                indexUnity=unities.index(unity_type,12,26)+1
+            elif site=='037':
+                indexUnity=unities.index(unity_type,27,34)+1
+            elif site=='140':
+                indexUnity=unities.index(unity_type,35,42)+1
+            elif site=='130':
+                indexUnity=unities.index(unity_type,43,50)+1
+            elif site=='139':
+                indexUnity=unities.index(unity_type,51,58)+1
+            elif site=='151':
+                indexUnity=unities.index(unity_type,59,66)+1
+            elif site=='187':
+                indexUnity=unities.index(unity_type,67,74)+1
+            elif site=='004':
+                indexUnity=unities.index(unity_type,75,90)+1
+            elif site=='051':
+                indexUnity=unities.index(unity_type,91,106)+1
+            elif site=='100':
+                indexUnity=unities.index(unity_type,107,114)+1
+            elif site=='108':
+                indexUnity=unities.index(unity_type,115,122)+1
+            elif site=='116':
+                indexUnity=unities.index(unity_type,123,138)+1
+            elif site=='065':
+                indexUnity=unities.index(unity_type,139,146)+1
+            elif site=='016':
+                indexUnity=unities.index(unity_type,147,155)+1
+            elif site=='083':
+                indexUnity=unities.index(unity_type,156,159)+1
+            elif site=='186':
+                indexUnity=unities.index(unity_type,160,167)+1
+            elif site=='002':
+                indexUnity=unities.index(unity_type,168,176)+1
+            elif site=='014':
+                indexUnity=unities.index(unity_type,177,184)+1
+            elif site=='019':
+                indexUnity=unities.index(unity_type,185,193)+1
+            elif site=='035':
+                indexUnity=unities.index(unity_type,194,202)+1
+            elif site=='024':
+                indexUnity=unities.index(unity_type,203,211)+1
+            elif site=='146':
+                indexUnity=unities.index(unity_type,212,219)+1
+            elif site=='027':
+                indexUnity=unities.index(unity_type,220,227)+1
+            elif site=='031':
+                indexUnity=unities.index(unity_type,228,236)+1
+            elif site=='132':
+                indexUnity=unities.index(unity_type,237,244)+1
+            elif site=='115':
+                indexUnity=unities.index(unity_type,245,252)+1
+            elif site=='145':
+                indexUnity=unities.index(unity_type,253,262)+1
+            elif site=='182':
+                indexUnity=unities.index(unity_type,263,270)+1
+            elif site=='185':
+                indexUnity=unities.index(unity_type,271,275)+1
+            print(destination_index,indexUnity,'VectorMatricial')
+            fare_CV=ws.cell(destination_index,indexUnity).value
+            print(fare_CV,'fare')
+
+    dest = shutil.copy(filename, r'C:\Users\aperalda\Documents')
 
 def validation(filename,mail):
     workbook = xlrd.open_workbook(filename)        #Determina el numero de filas
@@ -190,6 +190,7 @@ def validation(filename,mail):
 
     print(filas)
     print(noProcessedCV)
+    wb.close()
     tariifario(filas,filename)
     # noprocesados(noProcessedCV)
 
@@ -232,14 +233,13 @@ def retrieval():
     inbox = outlook.GetDefaultFolder(6)                         # "6" refers to the index of a folder - in this case the inbox.                                      
     messages = inbox.Items
     messages.Sort("[ReceivedTime]", True)
+    flag=0
     while 1:
         now=datetime.datetime.now()
-        print(now)
         while now+datetime.timedelta(seconds=60)>datetime.datetime.now():
-            flag=0
+            print('leyendo')
             for message in messages:
                 if message.Unread==True:
-                    print(message.Subject)
                     messageSubject=message.Subject
                     messageSubjectUpper=messageSubject.upper()
                     print(messageSubjectUpper)
@@ -249,22 +249,27 @@ def retrieval():
                         if numberOfAttachments==1:
                             print('Guardando')
                             flag=1
-                            file_name=r'D:\Descargas' + '\\'+ message.Attachments[0].FileName
+                            file_name=r'C:\Users\aperalda\Downloads' + '\\'+ message.Attachments[0].FileName
                             print(file_name)
                             message.Attachments[0].SaveAsFile(file_name)
                             message.Unread = False
-                            mailLocated=message
                             print('saliendo')
+                            time.sleep(3)
                             break
                         else:
+                            message.Unread=False
+                            time.sleep(3)
                             print('Te va a caer prro')
                             createReply(message,numberOfAttachments)
             if flag==1:
-                print('ahv')
                 break
         if flag==1:
-            print('jeje')
-            validation(file_name, mailLocated)
+            flag=0
+            validation(file_name, message)
+            message.Delete()
+            print('borrando')
+            time.sleep(10)
+            os.remove(file_name)
 
 retrieval()
 
