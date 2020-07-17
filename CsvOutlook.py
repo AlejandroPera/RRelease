@@ -230,44 +230,38 @@ def createReply(email,num):
 
 
 def retrieval():
-    inbox = outlook.GetDefaultFolder(6)                         # "6" refers to the index of a folder - in this case the inbox.                                      
-    messages = inbox.Items
-    messages.Sort("[ReceivedTime]", True)
     flag=0
     while 1:
+        print('actualizando')
         now=datetime.datetime.now()
+        inbox = outlook.GetDefaultFolder(6)                         # "6" refers to the index of a folder - in this case the inbox.                                      
+        messages = inbox.Items
+        messages.Sort("[ReceivedTime]", True)
         while now+datetime.timedelta(seconds=60)>datetime.datetime.now():
             print('leyendo')
             for message in messages:
-                if message.Unread==True:
-                    messageSubject=message.Subject
-                    messageSubjectUpper=messageSubject.upper()
-                    print(messageSubjectUpper)
-                    subjectSplit=messageSubjectUpper.split()
-                    if subjectSplit[0]=='ALTA' and subjectSplit[1]=='DE' and subjectSplit[2]=='TARIFAS' and subjectSplit[3]=='RPA':
-                        numberOfAttachments=len(message.Attachments)
-                        if numberOfAttachments==1:
-                            print('Guardando')
-                            flag=1
-                            file_name=r'C:\Users\aperalda\Downloads' + '\\'+ message.Attachments[0].FileName
-                            print(file_name)
-                            message.Attachments[0].SaveAsFile(file_name)
-                            message.Unread = False
-                            print('saliendo')
-                            time.sleep(3)
-                            break
-                        else:
-                            message.Unread=False
-                            time.sleep(3)
-                            print('Te va a caer prro')
-                            createReply(message,numberOfAttachments)
+                if message.Unread==True and message.Subject.upper() == 'ALTA DE TARIFAS RPA':
+                    numberOfAttachments=len(message.Attachments)
+                    if numberOfAttachments==1:
+                        print('Guardando')
+                        flag=1
+                        file_name=r'D:\Descargas' + '\\'+ message.Attachments[0].FileName
+                        print(file_name)
+                        message.Attachments[0].SaveAsFile(file_name)
+                        message.Unread = False
+                        print('saliendo')
+                        time.sleep(3)
+                        break
+                    else:
+                        message.Unread=False
+                        time.sleep(3)
+                        print('Te va a caer prro')
+                        createReply(message,numberOfAttachments)
             if flag==1:
                 break
         if flag==1:
             flag=0
             validation(file_name, message)
-            message.Delete()
-            print('borrando')
             time.sleep(10)
             os.remove(file_name)
 
