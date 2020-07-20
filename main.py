@@ -85,44 +85,29 @@ async def rateRecordOTM():
         #Total selected
         selected_total = int (await page.evaluate('(element) => element.innerText', element))
         #Click on the first one
-        #bodyDataDiv > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1) > div > div.fieldData
         #for i in range(1,selected_total):
-        #await page.click("#rgSGSec\\2e 2\\2e 2\\2e {}\\2e 1 > a".format(1))
-        
-        await page.goto("https://dsctmststr2.dhl.com/GC3/glog.webserver.finder.WindowOpenFramesetServlet/nss?ct=MTY0NTY0NTk3NDMzMDk2OTczMw%3D%3D&url=glog.webserver.util.ViewDisplayServlet%3Fquery_name%3Dglog.server.query.rate.RateOfferingQuery%26finder_set_gid%3D%26xid%3D115F_6049735_THN%26label%3DRate%20Offering%20ID%26gid%3DMXPLAN.115F_6049735_THN&is_new_window=true")
-        body = await page.evaluate('document.body.textContent', force_expr=True)
-        print(body)
-        frames = len(page.frames)
-        print(frames)
+        print("Ready to click")
+        await page.click("#rgSGSec\\2e 2\\2e 2\\2e {}\\2e 1 > a".format(1))
+        await page.waitFor(3000)
 
-        popup = page.frames[0]
-        
-        '''pages = await browser.pages()
-        pagesLen = len(pages)
-        #print(pagesLen)
-        secondPage = pages[pagesLen-1]
-        print(secondPage.url)'''
-        '''popLen = len(browser.targets())
+        popLen = len(browser.targets())
         print(popLen)
         pop = browser.targets()[popLen-1]
         #print(pop)
         popup = await pop.page()
-        #print(popup.url)
-        frame= popup.frames[0]
-        print(frame.url)
-        #print(type(frame))
-        
+        print(popup.url)
         
         #4 Validate Rate offering ID
         element = await popup.J("#bodyDataDiv > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1) > div > div.fieldData")
-        
+        print(element)
         offeringID = str (await popup.evaluate('(element) => element.innerText', element))
-        print(offeringID)'''
+        print(offeringID)
 
         
         await page.waitForNavigation() 
 
     else:
+
         await rateOffering(page)
 
     await page.waitForNavigation()
