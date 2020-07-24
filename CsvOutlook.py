@@ -4,9 +4,8 @@ from openpyxl import load_workbook
 
 outlook = win32.Dispatch("Outlook.Application").GetNamespace("MAPI")
 account= win32.Dispatch("Outlook.Application").Session.Accounts
-
+flagTime=0
 formato=[]
-
 tfares=r'C:\Users\aperalda\Documents\AltaDeTarifas\TarifMaster.xlsx'
  
 def txt_to_str(route):
@@ -44,18 +43,20 @@ def tariifario(filas,filename):
     unity_row=list(ws.rows)[2]
     dest=[cell.value for cell in destination_site_col]
     unities=[cell.value for cell in unity_row]
+    tarifas=[]
 
     for f in filas:
+        print(f)
         if type(f[10]) == str:
             special_case_flag=0
             site=f[3].split()[0]
             state=f[6].split('/')[0].strip()
             destination=f[6].split('/')[1].strip()
             unity_type=f[4]
-            print(unity_type,'Unity type')
-            print(site,'o')
-            print(state,'S')
-            print(destination,'d')
+            # print(unity_type,'Unity type')
+            # print(site,'o')
+            # print(state,'S')
+            # print(destination,'d')
             if destination in ['LA PAZ', 'BENITO JUAREZ','CALERA']:
                 special_case_flag=1
             if special_case_flag==0:
@@ -77,7 +78,7 @@ def tariifario(filas,filename):
                     else:
                         destination_index=133
 
-            print(destination_index,'d')
+            # print(destination_index,'d')
 
 
             if site=='015':
@@ -142,15 +143,17 @@ def tariifario(filas,filename):
                 indexUnity=unities.index(unity_type,271,275)+1
             print(destination_index,indexUnity,'VectorMatricial')
             fare_CV=ws.cell(destination_index,indexUnity).value
-            print(fare_CV,'fare')
-
+            # print(fare_CV,'fare')
+            tarifas.append([fare_CV, f[7]])
+    print(tarifas)
     dest = shutil.copy(filename, r'C:\Users\aperalda\Documents')
+    return tarifas
 
 def validation(filename,mail):
     workbook = xlrd.open_workbook(filename)        #Determina el numero de filas
     sheet=workbook.sheet_by_index(0)
     row_count=sheet.nrows 
-    print(row_count)
+    print('cantidad de tarifas a evaluar: ',row_count)
     wb = load_workbook(filename,read_only=True, data_only=True)       #Determina el numero de filas
     ws = wb.worksheets[0]
     for i in range(2,13):
@@ -188,11 +191,12 @@ def validation(filename,mail):
         else:
             filas.append(fila)
 
-    print(filas)
-    print(noProcessedCV)
+    print('tarifas a procesar: ', len(filas))
+    print('tarifas no procesadas: ', len(noProcessedCV))
     wb.close()
-    tariifario(filas,filename)
-    # noprocesados(noProcessedCV)
+    tarifas_CV=tariifario(filas,filename)
+    tarifas_CV.append(noProcessedCV)
+    return tarifas_CV
 
 
 def forwardFormatMailError(mail):
@@ -202,7 +206,7 @@ def forwardFormatMailError(mail):
     reply.HTMLBody = newBody + reply.HTMLBody
     reply.To=sender
     reply.Send()
-    print('Mandado')
+    print('Mandado error de formato en xlsx')
 
 # def forwardDateError(mail):
 #     reply=mail.Forward()
@@ -226,45 +230,63 @@ def createReply(email,num):
     reply.HTMLBody = newBody + reply.HTMLBody
     reply.To=sender
     reply.Send()
-    print('Mandado')
-
+    print('Mandado error de archivo adjunto')
 
 def retrieval():
     flag=0
-    while 1:
-        print('actualizando')
-        now=datetime.datetime.now()
-        inbox = outlook.GetDefaultFolder(6)                         # "6" refers to the index of a folder - in this case the inbox.                                      
-        messages = inbox.Items
-        messages.Sort("[ReceivedTime]", True)
-        while now+datetime.timedelta(seconds=60)>datetime.datetime.now():
-            print('leyendo')
-            for message in messages:
-                if message.Unread==True and message.Subject.upper() == 'ALTA DE TARIFAS RPA':
-                    numberOfAttachments=len(message.Attachments)
-                    if numberOfAttachments==1:
-                        print('Guardando')
-                        flag=1
-                        file_name=r'D:\Descargas' + '\\'+ message.Attachments[0].FileName
-                        print(file_name)
-                        message.Attachments[0].SaveAsFile(file_name)
-                        message.Unread = False
-                        print('saliendo')
-                        time.sleep(3)
-                        break
-                    else:
-                        message.Unread=False
-                        time.sleep(3)
-                        print('Te va a caer prro')
-                        createReply(message,numberOfAttachments)
-            if flag==1:
-                break
-        if flag==1:
-            flag=0
-            validation(file_name, message)
-            time.sleep(10)
-            os.remove(file_name)
 
-retrieval()
+    global flagTime
+    global nowT
+    print('actualizando')
+
+
+    if flagTime==1:
+        timeElapsed=datetime.datetime.now()-nowT
+        timeElapsed=timeElapsed.seconds
+        timeToWait=60-timeElapsed
+        print(timeToWait)
+        time.sleep(timeToWait)
+        flagTime=0
+
+    nowT=datetime.datetime.now()
+    inbox = outlook.GetDefaultFolder(6)                         # "6" refers to the index of a folder - in this case the inbox.                                      
+    messages = inbox.Items
+    messages.Sort("[ReceivedTime]", True)
+
+    if nowT+datetime.timedelta(seconds=60)>datetime.datetime.now() and flagTime==0:
+        flagTime=0
+        print('leyendo')
+        for message in messages:
+            if message.Unread==True and message.Subject.upper() == 'ALTA DE TARIFAS RPA':
+                numberOfAttachments=len(message.Attachments)
+                if numberOfAttachments==1:
+                    print('Guardando')
+                    flag=1
+                    file_name=r'C:\Users\aperalda\Downloads' + '\\'+ message.Attachments[0].FileName
+                    print(file_name)
+                    message.Attachments[0].SaveAsFile(file_name)
+                    message.Unread = False
+                    print('Mensaje leído')
+                    break
+                else:
+                    message.Unread=False
+                    time.sleep(1)
+                    print('Error en attachment')
+                    createReply(message,numberOfAttachments)
+                    flagTime=1
+    if flag==1:
+        flag=0
+        masterArray=validation(file_name, message)
+        time.sleep(2)
+        os.remove(file_name)
+        flagTime=1
+        return masterArray
+    else:
+        print('No se encontró alta de tarifas')
+        flagTime=1
+
+
+while 1:
+    print(retrieval())
 
 
