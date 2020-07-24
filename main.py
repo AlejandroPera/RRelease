@@ -86,23 +86,39 @@ async def rateRecordOTM():
         selected_total = int (await page.evaluate('(element) => element.innerText', element))
         #Click on the first one
         #for i in range(1,selected_total):
-        print("Ready to click")
         await page.click("#rgSGSec\\2e 2\\2e 2\\2e {}\\2e 1 > a".format(1))
-        await page.waitFor(3000)
+        await page.waitFor(4000)
 
+        #Control of pop up
         popLen = len(browser.targets())
-        print(popLen)
         pop = browser.targets()[popLen-1]
-        #print(pop)
         popup = await pop.page()
-        print(popup.url)
+        await popup.waitFor(4000)
         
-        #4 Validate Rate offering ID
-        element = await popup.J("#bodyDataDiv > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1) > div > div.fieldData")
-        print(element)
-        offeringID = str (await popup.evaluate('(element) => element.innerText', element))
-        print(offeringID)
+        frame=popup.frames[2] # Place on the frame containing the element
+        
+        #4 Validate Rate offering ID 
+        element = await frame.J("#bodyDataDiv > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1) > div > div.fieldData")
+        offeringID = await frame.evaluate('(element) => element.textContent', element)
+        splittedOffering = offeringID.split("_")
+        firstPart =  list(splittedOffering[0])
+        
+        element = await frame.J("#bodyDataDiv > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1) > div.fieldData > a")
+        version = await frame.evaluate('(element) => element.textContent', element)
+       
+        element = await frame.J("#bodyDataDiv > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(4) > div.fieldData")
+        equipmentGProfile = await frame.evaluate('(element) => element.textContent', element)
 
+        element = await frame.J("#bodyDataDiv > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(6) > div.fieldData")
+        transportMode = await frame.evaluate('(element) => element.textContent', element)
+
+        element = await frame.waitForXPath('//*[@id="bodyDataDiv"]/div[1]/table/tbody/tr[2]/td[6]/div/div[2]/img/@alt')
+        activeArrow = await frame.evaluate('(element) => element.textContent', element)
+
+        if (activeArrow=="TRUE" and version=="ACTIVE" and (equipmentGProfile=="THN") and (transportMode =="TLF") and (firstPart[len(firstPart)-1]=="F" or firstPart[len(firstPart)-1]=="L" )):
+            print("Is Valid")
+        else:
+            print("Not Valid")
         
         await page.waitForNavigation() 
 
