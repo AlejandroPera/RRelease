@@ -7,7 +7,56 @@ account= win32.Dispatch("Outlook.Application").Session.Accounts
 flagTime=0
 formato=[]
 tfares=r'C:\Users\aperalda\Documents\AltaDeTarifas\TarifMaster.xlsx'
+
+def outlookItem(fname):
+    cv_SPOT_No_Processed=[]
+    linePointer=9
+    newCont=''
+    line=''
+    flag=0
+    with open(fname) as msg_file:
+        msg = Message(msg_file)
+    content=msg.body
  
+    for c in content:
+        if c!='\n' and c!='\r' and c!='\t':
+            line+=c
+        else:
+            flag=1
+            pass
+        if flag==1:
+            if c!='\n' and c!='\r' and c!='\t':
+                lastChar=line[-1]
+                line=line[:-1]
+                line=line+'\n'
+                line=line+lastChar
+                flag=0
+            else:
+                pass
+    line=line.split('\n')
+    line = list(map(lambda x:x.upper(),line))
+    print(line)
+    data=[]
+    fare=[]
+    comData=[]
+    for i in range(len(line)):
+        if '$' in line[i]:
+            fare.append(i)
+    lastFareIndex=fare[-1]
+    if 'NÚM SP ID OTM' in line:
+        start=line.index('NÚM SP ID OTM')+10
+    for i in range(start,lastFareIndex+1,10):
+        singleData=[line[i],line[i+1],line[i+2],line[i+3],line[i+4],line[i+5],line[i+6],line[i+7],line[i+8],line[i+9],linePointer]
+        linePointer+=1
+        if ' ' in singleData:
+            cv_SPOT_No_Processed.append(line[i+6])
+        else:
+            comData.append(singleData)
+    comData.append(cv_SPOT_No_Processed)
+    return comData
+
+
+
 def txt_to_str(route):
     f = open(route, mode="r", encoding="utf-8")
     content = f.read()
@@ -151,11 +200,11 @@ def tariifario(filas,filename):
 
 def validation(filename,mail):
     workbook = xlrd.open_workbook(filename)        #Determina el numero de filas
-    sheet=workbook.sheet_by_index(0)
+    sheet=workbook.sheet_by_index(1)
     row_count=sheet.nrows 
     print('cantidad de tarifas a evaluar: ',row_count)
     wb = load_workbook(filename,read_only=True, data_only=True)       #Determina el numero de filas
-    ws = wb.worksheets[0]
+    ws = wb.worksheets[1]
     for i in range(2,13):
         formato.append(ws.cell(8,i).value.upper())
     # fecha=str(ws.cell(7,5).value).split()[0]
@@ -198,6 +247,59 @@ def validation(filename,mail):
     tarifas_CV.append(noProcessedCV)
     return tarifas_CV
 
+#-------------------------------------------------------------------------------------------------------------
+def validationSPOT(xlsxFile,arr_To_Validate,mail):
+    inconsistantData=[]
+    cv_No_Pro=arr_To_Validate[-1]
+    arr_To_Validate=arr_To_Validate[:-1]
+    wb = xlrd.open_workbook(xlsxFile)        #Determina el numero de filas
+    sheet=wb.sheet_by_index(1)
+    row_count=sheet.nrows 
+    print('cantidad de tarifas a evaluar: ',row_count)
+    wb = load_workbook(xlsxFile,read_only=True, data_only=True)       #Determina el numero de filas
+    ws = wb.worksheets[1]
+    for i in range(2,13):
+        formato.append(ws.cell(8,i).value.upper())
+    # fecha=str(ws.cell(7,5).value).split()[0]
+    # if fecha==str(datetime.date.today()):
+    #     pass
+    if re.match('NO.?',formato[0]) and re.match('.*?ID.*?OTM', formato[1]) and re.match('.*?L[IÍ]NEA', formato[2]) and re.match('.*?PREDIO', formato[3]) and re.match('.*?UNIDAD', formato[4]) and re.match('C[P]?([ÓO]DIGO POSTAL)?', formato[5]) and re.match('POBLACI[ÓO]N', formato[6]) and re.match('C[V]?(ONTROL VEH[ÍI]CULAR)?', formato[7]) and re.match('.*?TARIFA', formato[8]) and re.match('AUTORIZA', formato[9]) and re.match('.*?IMPORTE', formato[10]):
+        pass
+    else:
+        forwardFormatMailError(mail)
+    # if type(None) in formato:
+    #     pass
+    col=3
+    for i in arr_To_Validate:
+        fareInd=i[-2].replace(' ','')
+        i.pop(-2)
+        i.insert(-2,fareInd)
+
+    for i in range(len(arr_To_Validate)):
+        inconsistency=0
+        for s in range(len(arr_To_Validate[0])):
+            row=arr_To_Validate[i][-1]
+            if s==8:
+                fareXlsx=ws.cell(row,col).value
+                fareXlsx.replace(' ','')
+                if fareXlsx!=arr_To_Validate[i][s]:
+                    inconsistency=1
+            elif ws.cell(row,col).value!=arr_To_Validate[i][s]:
+                inconsistency=1
+            col+=1
+        if inconsistency==0:
+            pass
+        else:
+            inconsistantData.append(arr_To_Validate[i][6])
+            arr_To_Validate.pop(i)
+    
+    arr_To_Validate.append(inconsistantData)
+    arr_To_Validate.append(cv_No_Pro)
+    wb.close()
+    return tarfias_CV
+                
+    
+
 
 def forwardFormatMailError(mail):
     reply=mail.Forward()
@@ -223,10 +325,7 @@ def createReply(email,num):
     reply=email.Forward()
     sender=email.Sender
     print(sender)
-    if num>1:
-        newBody = "Debe haber únicamente un archivo adjunto"
-    else:
-        newBody=   'No existe archivo adjunto'
+    newBody='El número de archivos adjuntos no es el esperado'
     reply.HTMLBody = newBody + reply.HTMLBody
     reply.To=sender
     reply.Send()
@@ -257,7 +356,7 @@ def retrieval():
         flagTime=0
         print('leyendo')
         for message in messages:
-            if message.Unread==True and message.Subject.upper() == 'ALTA DE TARIFAS RPA':
+            if message.Unread==True and 'TARIFAS RPA' in message.Subject.upper():
                 numberOfAttachments=len(message.Attachments)
                 if numberOfAttachments==1:
                     print('Guardando')
@@ -273,20 +372,47 @@ def retrieval():
                     time.sleep(1)
                     print('Error en attachment')
                     createReply(message,numberOfAttachments)
-                    flagTime=1
+            
+
+            elif message.Unread==True and 'SPOT RPA' in message.Subject.upper():
+                numberOfAttachments=len(message.Attachments)
+                if numberOfAttachments==2:
+                    print('Guardando')
+                    flag=2
+                    file_name1=r'C:\Users\aperalda\Downloads' + '\\'+ message.Attachments[0].FileName
+                    file_name2=r'C:\Users\aperalda\Downloads' + '\\'+ message.Attachments[1].FileName
+                    print(file_name)
+                    message.Attachments[0].SaveAsFile(file_name1)
+                    message.Attachments[1].SaveAsFile(file_name2)
+                    docs=[file_name,file_name1]
+                    for i in docs:
+                        if '.msg' in i:
+                            msg=i
+                        else:
+                            xlsxFile=i
+                    message.Unread = False
+                    print('Mensaje leído')
+                    break
+                else:
+                    message.Unread=False
+                    time.sleep(1)
+                    print('Error en attachment')
+                    createReply(message,numberOfAttachments)
+            
+
     if flag==1:
         flag=0
         masterArray=validation(file_name, message)
         time.sleep(2)
         os.remove(file_name)
-        flagTime=1
         return masterArray
+    elif flag==2:
+        flag=0
+        masterArray=validationSPOT(xlsxFile,outlookItem(msg),message)
     else:
         print('No se encontró alta de tarifas')
-        flagTime=1
 
 
 while 1:
     print(retrieval())
-
-
+    flagTime=1
