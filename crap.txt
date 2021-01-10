@@ -1,0 +1,115 @@
+0
+ <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="/js/comm/rcf/common.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/rcf/dragDrop.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/rcf/event.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/rcf/peer.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/rcf/component.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/rt.js" type="text/javascript" language="javascript"> </script><script src="/js/buttons/buttons.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/ajax.js" type="text/javascript" language="javascript"> </script><script src="/js/help.js" type="text/javascript" language="javascript"> </script><script>
+
+        TMAssert.DEBUG = false;
+        TMAgent.AGENT = TMAgent.getAgent(this);
+        TMPage.PAGE = new TMPage(this);
+        TMPage.PAGE.setRenderedByJSP(false);
+
+        appendOnLoadScript();
+
+       // TMPage.PAGE.__onLoad();
+
+        var glogUrlPrefix = '';
+        var glogServlet = '1600116663559';
+        var glogUrlContext = '\x2FGC3\x2F';
+        var glogRawUrlContext = 'GC3';
+        var breadCrumbsKey = '';
+        var vol_width  = 'Width';
+        var vol_height = 'Height';
+        var vol_length = 'Length';
+        var vol_calc = 'Calculate';
+        var vol_width_alert  = 'Width\x20must\x20be\x20a\x20number';
+        var vol_height_alert = 'Height\x20must\x20be\x20a\x20number';
+        var vol_length_alert = 'Length\x20must\x20be\x20a\x20number';
+        var show_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fshow.gif";
+        var hide_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fhide.gif";
+        var show_img_alt = "Expand";
+        var hide_img_alt = "Collapse";
+        var spacer_solid_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fspacer_solid.gif";
+        var selected_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fselected.gif";
+        var grid_edit_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fupdateicon_enabled.gif";
+        var grid_delete_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fdeleteicon_enabled.gif";
+        var move_left_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fshuttle_remove_enabled.gif";
+        var move_right_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fshuttle_move_enabled.gif";
+    var browser = navigator.appName;
+    var ie = "Microsoft Internet Explorer";
+    var netscape = "Netscape";
+        var displayPopupsFormatted = true;
+        var ct = 'NzAwNjY4MTA5OTkxNzc2NzQzMg\x3D\x3D';
+        var isTablet = false;
+        var addClientSessionEvents = false;
+        var loadingImage = '\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fprocess_animation.gif';
+        </script><link type="text/css" rel="styleSheet" href="/css/finder/finder_help.css"><link type="text/css" rel="styleSheet" href="/css/custom/dhl_stylesheets/themes/themesswanblue.css"><link type="text/css" rel="styleSheet" href="/css/finder/finder.css"><script src="/js/help.js" type="text/javascript" language="javascript"> </script><script>
+      var helpRootDir = 'en';
+      var gc3_help_url = '/html/help/webhelp/'+helpRootDir+'/general/search_gc3.htm';
+      var gc3_main_help_url = '/html/help/webhelp/en/gc3_help.htm';
+      if (window.parent && document.title && (!window.parent.TMPage || window.parent.TMPage.PAGE.getAllowWindowTitleChangeByChild()))
+      {
+         window.parent.document.title= document.title;
+      }
+     </script><script src="/js/comm/fields.js" type="text/javascript" language="javascript"></script><script>
+        function refreshFrame() {
+          frames['buttons'].window.location.href = formatUrl("glog.webserver.finder.WindowOpenButtonsServlet", false, true); // frame 1's page
+        }
+        </script></head><frameset frameborder="0" border="0" framespacing="0" rows="40,*" onload="refreshFrame();"><frame frameborder="3" scrolling="no" noresize="true" name="buttons" src="/GC3/glog.webserver.finder.LoadingServlet/nss?ct=NzAwNjY4MTA5OTkxNzc2NzQzMg%3D%3D"><frame scrolling="no" noresize="true" name="mainBody" src="/GC3/glog.webserver.util.QueryResponseServlet/1600116663559?ct=NzAwNjY4MTA5OTkxNzc2NzQzMg%3D%3D&amp;bcKey=new&amp;action_name=rate_geo_copy&amp;management_action=go&amp;finder_set_gid=MXPLAN.MX%20RECORD&amp;pk=MXPLAN.015F_110425_THN_A18-CON_AGS_AGUASCA"></frameset></html>
+
+1
+ <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="/js/comm/rcf/common.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/rcf/dragDrop.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/rcf/event.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/rcf/peer.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/rcf/component.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/rt.js" type="text/javascript" language="javascript"> </script><script src="/js/buttons/buttons.js" type="text/javascript" language="javascript"> </script><script src="/js/comm/ajax.js" type="text/javascript" language="javascript"> </script><script src="/js/help.js" type="text/javascript" language="javascript"> </script><script>
+
+        TMAssert.DEBUG = false;
+        TMAgent.AGENT = TMAgent.getAgent(this);
+        TMPage.PAGE = new TMPage(this);
+        TMPage.PAGE.setRenderedByJSP(false);
+
+        appendOnLoadScript();
+
+       // TMPage.PAGE.__onLoad();
+
+        var glogUrlPrefix = '';
+        var glogServlet = '';
+        var glogUrlContext = '\x2FGC3\x2F';
+        var glogRawUrlContext = 'GC3';
+        var breadCrumbsKey = '';
+        var vol_width  = 'Width';
+        var vol_height = 'Height';
+        var vol_length = 'Length';
+        var vol_calc = 'Calculate';
+        var vol_width_alert  = 'Width\x20must\x20be\x20a\x20number';
+        var vol_height_alert = 'Height\x20must\x20be\x20a\x20number';
+        var vol_length_alert = 'Length\x20must\x20be\x20a\x20number';
+        var show_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fshow.gif";
+        var hide_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fhide.gif";
+        var show_img_alt = "Expand";
+        var hide_img_alt = "Collapse";
+        var spacer_solid_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fspacer_solid.gif";
+        var selected_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fselected.gif";
+        var grid_edit_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fupdateicon_enabled.gif";
+        var grid_delete_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fdeleteicon_enabled.gif";
+        var move_left_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fshuttle_remove_enabled.gif";
+        var move_right_img = "\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fshuttle_move_enabled.gif";
+    var browser = navigator.appName;
+    var ie = "Microsoft Internet Explorer";
+    var netscape = "Netscape";
+        var displayPopupsFormatted = true;
+        var ct = 'NzAwNjY4MTA5OTkxNzc2NzQzMg\x3D\x3D';
+        var isTablet = false;
+        var addClientSessionEvents = false;
+        var loadingImage = '\x2Fimages\x2Fthemes\x2Fthemesswanblue\x2Fprocess_animation.gif';
+        </script><link type="text/css" rel="styleSheet" href="/css/finder/finder_help.css"><link type="text/css" rel="styleSheet" href="/css/custom/dhl_stylesheets/themes/themesswanblue.css"><link type="text/css" rel="styleSheet" href="/css/finder/finder.css"><script src="/js/help.js" type="text/javascript" language="javascript"> </script><script>
+      var helpRootDir = 'en';
+      var gc3_help_url = '/html/help/webhelp/'+helpRootDir+'/general/search_gc3.htm';earch_gc3.htm';
+      var gc3_main_help_url = '/html/help/webhelp/en/gc3_help.htm';    window.parent.TMPage.PAGE.getAllowWindowTitleChangeByChild()))
+      if (window.parent && document.title && (!window.parent.TMPage || window.parent.TMPage.PAGE.getAllowWindowTitleChangeByChild()))
+      {
+         window.parent.document.title= document.title;
+      }
+     </script><script src="/js/comm/fields.js" type="text/javascript" language="javascript"></script></head><body marginheight="3" topmargin="5" bgcolor="white" onload="window.history.forward();"><p></p><center><img src="/images/themes/themesswanblue/process_animation.gif" title="null"></center><p></p></body></html>
+
+2
+ <html><head></head><body></body></html>
+
+
+
+
+
